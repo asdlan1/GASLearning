@@ -17,6 +17,11 @@ class GASLEARNING_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInter
 
 public:
 	AAuraEnemy();
+	//继承实现接口的两个方法
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
+	//
+
+protected:
+	virtual void BeginPlay() override;
 };
