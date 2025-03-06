@@ -27,7 +27,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
+	UPROPERTY()
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
+	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributesSet;
+
+	virtual void InitAbilityActorInfo();
 };
