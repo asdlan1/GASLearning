@@ -18,7 +18,11 @@ public:
 	AAuraCharacter();
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
-	virtual  void InitAbilityActorInfo() override;
+
+	//战斗接口的是实现
+	virtual int32 GetPlayerLevel() override;
+	//
 
 private:
+	virtual  void InitAbilityActorInfo() override;
 };

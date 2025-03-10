@@ -71,7 +71,7 @@ void AAuraPlayerController::CursorTrace()
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = ThisActor;
-	ThisActor = Cast<IEnemyInterface>(CursorHit.GetActor());
+	ThisActor = CursorHit.GetActor();
 
 	/**
 	 *鼠标追踪的几种情况
@@ -92,13 +92,13 @@ void AAuraPlayerController::CursorTrace()
 		}
 		return;
 	}
-	if (LastActor && ThisActor == nullptr)
+	if (LastActor && ThisActor == nullptr) //lastactor空，thisacotr空。 lastactor，thisactor。 lastactor空，thisactor。
 	{
 		LastActor->UnHighlightActor();
 	}
 	else
 	{
-		if (ThisActor)
+		if (ThisActor && LastActor != ThisActor)
 		{
 			ThisActor->HighlightActor();
 		}
