@@ -10,6 +10,8 @@
 #include "AuraEnemy.generated.h"
 
 class UWidgetComponent;
+class UBehaviorTree;
+class AAuraAIController;
 /**
  * 
  */
@@ -20,6 +22,8 @@ class GASLEARNING_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInter
 
 public:
 	AAuraEnemy();
+	virtual void PossessedBy(AController* NewController) override;
+	
 	//继承实现敌人接口的两个方法
 	virtual void HighlightActor() override;
 	virtual void UnHighlightActor() override;
@@ -60,6 +64,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
+
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AAuraAIController> AuraAIController;
 
 private:
 };
