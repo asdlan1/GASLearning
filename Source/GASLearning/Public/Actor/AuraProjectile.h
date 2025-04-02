@@ -30,7 +30,7 @@ protected:
 	virtual void Destroyed() override;
 	
 	UFUNCTION()
-	void OnSphereOverlap(UPrimitiveComponent* OverlapedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFormSweep, const FHitResult& SweepResult);
+	void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFormSweep, const FHitResult& SweepResult);
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
