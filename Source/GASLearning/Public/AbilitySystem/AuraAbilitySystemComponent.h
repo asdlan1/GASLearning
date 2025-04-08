@@ -4,9 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+#include "GASLearning/AuraLogChannels.h"
 #include "AuraAbilitySystemComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /*AssetTags*/)
+DECLARE_MULTICAST_DELEGATE_OneParam(FAbilitiesGiven, class UAuraAbilitySystemComponent*);
+DECLARE_DELEGATE_OneParam(FForeachAbility, const FGameplayAbilitySpec&);
 
 /**
  * 
@@ -20,13 +23,21 @@ public:
 	void AbilityActorInfoSet();
 
 	FEffectAssetTags EffectAssetTags;
+	FAbilitiesGiven AbilitiesGivenDelegate;
 
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
+	bool bStartupAbilitiesGiven = false;
 
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
+	void ForEachAbility(const FForeachAbility& Delegate);
+
+	static FGameplayTag GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	static FGameplayTag GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec);
 
 protected:
+	virtual void OnRep_ActivateAbilities() override;
+	
 	UFUNCTION(Client, Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
 };
