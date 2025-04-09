@@ -166,6 +166,15 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		);
 
 	/*
+	 * 元属性
+	 */
+	
+	GameplayTags.Attributes_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"),
+		FString("IncomingXP Meta Attribute")
+		);
+
+	/*
 	 * 伤害类型与抗性对照表
 	 */
 
