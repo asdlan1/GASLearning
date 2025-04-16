@@ -33,11 +33,6 @@ public:
 	FGameplayTag Attributes_Secondary_MaxHealth;
 	FGameplayTag Attributes_Secondary_MaxMana;
 
-	FGameplayTag Attributes_Resistance_Fire;
-	FGameplayTag Attributes_Resistance_Lightning;
-	FGameplayTag Attributes_Resistance_Arcane;
-	FGameplayTag Attributes_Resistance_Physical;
-
 	FGameplayTag Attributes_Meta_IncomingXP;
 
 	FGameplayTag InputTag_LMB;
@@ -54,6 +49,21 @@ public:
 	FGameplayTag Damage_Lightning;
 	FGameplayTag Damage_Arcane;
 	FGameplayTag Damage_Physical;
+	
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Physical;
+
+	FGameplayTag DeBuff_Burn;
+	FGameplayTag DeBuff_Stun;
+	FGameplayTag DeBuff_Arcane;
+	FGameplayTag DeBuff_Physical;
+
+	FGameplayTag DeBuff_Chance;
+	FGameplayTag DeBuff_Damage;
+	FGameplayTag DeBuff_Duration;
+	FGameplayTag DeBuff_Frequency;
 	
 	FGameplayTag Abilities_None;
 
@@ -87,6 +97,7 @@ public:
 	FGameplayTag Montage_Attack_4;
 
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDeBuffs;
 
 	FGameplayTag Effects_HitReact;
 
