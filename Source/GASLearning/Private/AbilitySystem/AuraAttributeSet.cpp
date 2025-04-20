@@ -297,13 +297,14 @@ void UAuraAttributeSet::DeBuff(const FEffectProperties& Props)
 
 	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
 	Effect->Period = DeBuffFrequency;
+	Effect->bExecutePeriodicEffectOnApplication = false;
 	Effect->DurationMagnitude = FScalableFloat(DeBuffDuration);
 
 	UTargetTagsGameplayEffectComponent& TargetTagsGameplayEffectComponent = Effect->AddComponent<UTargetTagsGameplayEffectComponent>();
 	FInheritedTagContainer InheritedOwnerTagContainer = TargetTagsGameplayEffectComponent.GetConfiguredTargetTagChanges();
 	InheritedOwnerTagContainer.AddTag(GameplayTags.DamageTypesToDeBuffs[DamageType]);
 	TargetTagsGameplayEffectComponent.SetAndApplyTargetTagChanges(InheritedOwnerTagContainer);
-
+	
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;
 
