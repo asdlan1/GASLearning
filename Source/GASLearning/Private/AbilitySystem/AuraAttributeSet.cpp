@@ -224,9 +224,12 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 		}
 		else
 		{
-			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			if (Props.TargetCharacter->Implements<UCombatInterface>() && !ICombatInterface::Execute_IsBeingShocked(Props.TargetCharacter))
+			{
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::Get().Effects_HitReact);
+				Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
 
 			const FVector& KnockBackForce = UAuraAbilitySystemLibrary::GetKnockBackForce(Props.EffectContextHandle);
 			if (!KnockBackForce.IsNearlyZero(1.f))
@@ -300,10 +303,20 @@ void UAuraAttributeSet::DeBuff(const FEffectProperties& Props)
 	Effect->bExecutePeriodicEffectOnApplication = false;
 	Effect->DurationMagnitude = FScalableFloat(DeBuffDuration);
 
+	const FGameplayTag DeBuffTag = GameplayTags.DamageTypesToDeBuffs[DamageType];
 	UTargetTagsGameplayEffectComponent& TargetTagsGameplayEffectComponent = Effect->AddComponent<UTargetTagsGameplayEffectComponent>();
 	FInheritedTagContainer InheritedOwnerTagContainer = TargetTagsGameplayEffectComponent.GetConfiguredTargetTagChanges();
-	InheritedOwnerTagContainer.AddTag(GameplayTags.DamageTypesToDeBuffs[DamageType]);
+	InheritedOwnerTagContainer.Added.AddTag(DeBuffTag);
 	TargetTagsGameplayEffectComponent.SetAndApplyTargetTagChanges(InheritedOwnerTagContainer);
+	if (DeBuffTag.MatchesTagExact(GameplayTags.DeBuff_Stun))
+	{
+		InheritedOwnerTagContainer.AddTag(GameplayTags.Player_Block_CursorTrace);
+		InheritedOwnerTagContainer.AddTag(GameplayTags.Player_Block_InputHeld);
+		InheritedOwnerTagContainer.AddTag(GameplayTags.Player_Block_InputPressed);
+		InheritedOwnerTagContainer.AddTag(GameplayTags.Player_Block_InputReleased);
+		TargetTagsGameplayEffectComponent.SetAndApplyTargetTagChanges(InheritedOwnerTagContainer);
+	}
+	
 	
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;

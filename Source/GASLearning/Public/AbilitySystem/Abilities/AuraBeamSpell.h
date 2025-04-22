@@ -16,10 +16,22 @@ class GASLEARNING_API UAuraBeamSpell : public UAuraDamageGameplayAbility
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void StoreMouseDataInfo(const FHitResult& HitResult);
+	void StoreMouseDataInfo(const FHitResult& HitResult, bool& bMouseDataWasStored);
 
 	UFUNCTION(BlueprintCallable)
 	void StoreOwnerVariables();
+
+	UFUNCTION(BlueprintCallable)
+	void TraceFirstTarget(const FVector& BeamTargetLocation);
+
+	UFUNCTION(BlueprintCallable)
+	void StoreAdditionalActionTarget(TArray<AActor*>& OutAdditionalTargets);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void AdditionalTargetDied(AActor* DeadActor);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PrimaryTargetDied(AActor* DeadActor);
 
 protected:
 
@@ -34,4 +46,7 @@ protected:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Beam")
 	TObjectPtr<ACharacter> OwnerCharacter;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Beam")
+	int32 MaxNumShockTargets = 5;
 };
