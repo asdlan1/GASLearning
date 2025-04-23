@@ -267,6 +267,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FString("Summon Ability Tag")
 		);
 
+
+	/*
+	  * 主动技能
+	  */
+	
 	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Abilities.Fire.FireBolt"),
 		FString("FireBolt Ability Tag")
@@ -276,6 +281,11 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Abilities.Lightning.Electrocute"),
 		FString("Electrocute Ability Tag")
 		);
+
+	GameplayTags.Abilities_Arcane_ArcaneShards = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		 FName("Abilities.Arcane.ArcaneShards"),
+		 FString("Arcane Shards Ability Tag")
+		 );
 
 	/*
 	  * 被动技能
