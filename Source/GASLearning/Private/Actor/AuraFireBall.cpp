@@ -28,7 +28,7 @@ void AAuraFireBall::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 			DamageEffectParams.DeathImpulse = DeathImpulse;
 		
 			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
-			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);
+			UAuraAbilitySystemLibrary::ApplyDamageEffect(DamageEffectParams);	
 		}
 	}
 }
