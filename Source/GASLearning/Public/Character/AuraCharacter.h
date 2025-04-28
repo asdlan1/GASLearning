@@ -38,6 +38,7 @@ public:
 	virtual int32 GetSpellPoints_Implementation() const override;
 	virtual void ShowMagicCircle_Implementation(UMaterialInterface* DecalMaterial) override;
 	virtual void HideMagicCircle_Implementation() override;
+	virtual void SaveProgress_Implementation(const FName& CheckPointTag) override;
 	//
 
 	//战斗接口的是实现
@@ -48,8 +49,9 @@ public:
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
 	virtual void OnRep_Stunned() override;
-
 	virtual void OnRep_Burned() override;
+
+	void LoadProgress();
 
 private:
 	UPROPERTY(VisibleAnywhere)

@@ -12,6 +12,7 @@ class UAbilitySystemComponent;
 class UAttributeSet;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*StatValue*/)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLevelChanged, int32 /*StatValue*/, bool /*LevelUp*/)
 
 UCLASS()
 class GASLEARNING_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface
@@ -28,7 +29,7 @@ public:
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 	
 	FOnPlayerStatChanged OnXPChangedDelegate;
-	FOnPlayerStatChanged OnLevelChangedDelegate;
+	FOnLevelChanged OnLevelChangedDelegate;
 	FOnPlayerStatChanged OnAttributePointsChangedDelegate;
 	FOnPlayerStatChanged OnSpellPointsChangedDelegate;
 	
@@ -44,6 +45,8 @@ public:
 	
 	void SetXP(int32 InXP);
 	void SetLevel(int32 InLevel);
+	void SetAttributePoints(int32 InPoints);
+	void SetSpellPoints(int32 InPoints);
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -57,7 +60,7 @@ private:
 	int32 Level = 1;
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_XP)
-	int32 XP = 1;
+	int32 XP = 0;
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_AttributePoints)
 	int32 AttributePoints = 0;
