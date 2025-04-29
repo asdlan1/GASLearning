@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "AuraPlayerController.generated.h"
 
+class IHighlightInterface;
 class AMagicCircle;
 class UNiagaraSystem;
 class UDamageTextComponent;
@@ -14,9 +15,15 @@ class UAuraInputConfig;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
-class IEnemyInterface;
 class UAuraAbilitySystemComponent;
 class USplineComponent;
+
+enum ETargetingStatus
+{
+	TargetingEnemy,
+	TargetingMapEntrance,
+	NotTargeting
+};
 
 UCLASS()
 class GASLEARNING_API AAuraPlayerController : public APlayerController
@@ -57,9 +64,11 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 
 	void CursorTrace();
-	TScriptInterface<IEnemyInterface> LastActor;
-	TScriptInterface<IEnemyInterface> ThisActor;
+	TObjectPtr<AActor> LastActor;
+	TObjectPtr<AActor> ThisActor;
 	FHitResult CursorHit;
+	static void HighlightActor(AActor* InActor);
+	static void UnHighlightActor(AActor* InActor);
 
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
@@ -77,7 +86,7 @@ private:
 	float FollowTime = 0.f;
 	float ShortPressThreshold = 0.5f;
 	bool bAutoRunning = false;
-	bool bTargeting = false;
+	ETargetingStatus TargetingStatus = NotTargeting;
 
 	UPROPERTY(EditDefaultsOnly)
 	float AutoRunAcceptanceRadius = 50.f;

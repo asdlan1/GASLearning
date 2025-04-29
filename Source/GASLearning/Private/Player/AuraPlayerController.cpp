@@ -15,9 +15,10 @@
 #include "Components/SplineComponent.h"
 
 #include "Input/AuraInputComponent.h"
-#include "Interaction/EnemyInterface.h"
 #include "GameFramework/Character.h"
 #include "GASLearning/GASLearning.h"
+#include "Interaction/EnemyInterface.h"
+#include "Interaction/HighlightInterface.h"
 #include "UI/Widgets/DamageTextComponent.h"
 
 AAuraPlayerController::AAuraPlayerController()
@@ -115,12 +116,29 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 	}
 }
 
+void AAuraPlayerController::HighlightActor(AActor* InActor)
+{
+	if (IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_HighlightActor(InActor);
+	}
+}
+
+void AAuraPlayerController::UnHighlightActor(AActor* InActor)
+{
+	if (IsValid(InActor) && InActor->Implements<UHighlightInterface>())
+	{
+		IHighlightInterface::Execute_UnHighlightActor(InActor);
+	}
+}
+
 void AAuraPlayerController::CursorTrace()
 {
 	if (GetASC() && GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_CursorTrace))
 	{
-		if (LastActor) LastActor->UnHighlightActor();
-		if (ThisActor) ThisActor->UnHighlightActor();
+		HighlightActor(LastActor);
+		UnHighlightActor(ThisActor);
+		
 		LastActor = nullptr;
 		ThisActor = nullptr;
 		return;
@@ -130,12 +148,19 @@ void AAuraPlayerController::CursorTrace()
 	if (!CursorHit.bBlockingHit) return;
 
 	LastActor = ThisActor;
-	ThisActor = CursorHit.GetActor();
+	if (IsValid(CursorHit.GetActor()) && CursorHit.GetActor()->Implements<UHighlightInterface>())
+	{
+		ThisActor = CursorHit.GetActor();
+	}
+	else
+	{
+		ThisActor = nullptr;
+	}
 
 	if (LastActor != ThisActor)
 	{
-		if (LastActor) LastActor->UnHighlightActor();
-		if (ThisActor) ThisActor->HighlightActor();
+		UnHighlightActor(LastActor);
+		HighlightActor(ThisActor);
 	}
 }
 
@@ -145,7 +170,14 @@ void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 	
 	if (InputTag.MatchesTagExact(FAuraGameplayTags::Get().InputTag_LMB))
 	{
-		bTargeting = ThisActor ? true : false;
+		if (IsValid(ThisActor))
+		{
+			TargetingStatus = ThisActor->Implements<UEnemyInterface>() ? TargetingEnemy : TargetingMapEntrance;
+		}
+		else
+		{
+			TargetingStatus = NotTargeting;
+		}
 		bAutoRunning = false;
 	}
 	if (GetASC()) GetASC()->AbilityLocalTagPressed(InputTag);
@@ -163,7 +195,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 	
-	if (!bTargeting && !bShiftKeyDown)
+	if (TargetingStatus != TargetingEnemy && !bShiftKeyDown)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		if (FollowTime <= ShortPressThreshold && ControlledPawn)
@@ -187,7 +219,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 			}
 		}
 		FollowTime = 0.f;
-		bTargeting = false;
+		TargetingStatus = NotTargeting;
 	}
 }
 
@@ -201,7 +233,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 
-	if (bTargeting || bShiftKeyDown)
+	if (TargetingStatus == TargetingEnemy || bShiftKeyDown)
 	{
 		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}

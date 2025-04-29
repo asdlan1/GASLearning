@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
+#include "Interaction/HighlightInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "AuraEnemy.generated.h"
 
@@ -15,7 +16,7 @@ class AAuraAIController;
  * 
  */
 UCLASS()
-class GASLEARNING_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface
+class GASLEARNING_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
 
@@ -23,9 +24,9 @@ public:
 	AAuraEnemy();
 	virtual void PossessedBy(AController* NewController) override;
 	
-	//继承实现敌人接口的两个方法
-	virtual void HighlightActor() override;
-	virtual void UnHighlightActor() override;
+	//继承实现高亮接口的两个方法
+	virtual void HighlightActor_Implementation() override;
+	virtual void UnHighlightActor_Implementation() override;
 	//
 
 	//继承实现战斗接口
