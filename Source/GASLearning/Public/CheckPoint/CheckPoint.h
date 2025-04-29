@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerStart.h"
+#include "Interaction/SaveInterface.h"
 #include "CheckPoint.generated.h"
 
 class USphereComponent;
@@ -11,16 +12,20 @@ class USphereComponent;
  * 
  */
 UCLASS()
-class GASLEARNING_API ACheckPoint : public APlayerStart
+class GASLEARNING_API ACheckPoint : public APlayerStart, public ISaveInterface
 {
 	GENERATED_BODY()
 
 public:
-	/**
-	 * 
-	 * @param ObjectInitializer 
-	 */
 	ACheckPoint(const FObjectInitializer& ObjectInitializer);
+
+	/*Save Interface*/
+	virtual bool ShouldLoadTransform_Implementation() override { return false; };
+	virtual void LoadActor_Implementation() override;
+	//
+
+	UPROPERTY(BlueprintReadOnly, SaveGame)
+	bool bReached = false;
 
 protected:
 	UFUNCTION()
