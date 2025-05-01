@@ -8,6 +8,7 @@
 #include "Data/CharacterClassInfo.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+class ULootTiers;
 class ULoadScreenSaveGame;
 struct FGameplayTag;
 class UAbilityInfo;
@@ -62,6 +63,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|CharacterClassDefaults")
 	static UAbilityInfo* GetAbilityInfo(const UObject* WorldContextObject);
+
+	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|CharacterClassDefaults", meta = (DefaultToSelf = "WorldContextObject"))
+	static ULootTiers* GetLootTiers(const UObject* WorldContextObject);
 
 	/*
 	 *效果上下文Getter
@@ -165,10 +169,10 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
 
-	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|DamageEffect")
 	static TArray<FRotator> EvenlySpacedRotators(const FVector& Forward, const FVector& Axis, float Spread, int32 NumRotators);
 
-	UFUNCTION(BlueprintCallable, Category = "AuraAbilitySystemLibrary|DamageEffect")
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|DamageEffect")
 	static TArray<FVector> EvenlySpacedVectors(const FVector& Forward, const FVector& Axis, float Spread, int32 NumVectors);
 
 	static int32 GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel);

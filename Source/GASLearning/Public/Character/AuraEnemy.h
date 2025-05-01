@@ -27,6 +27,7 @@ public:
 	//继承实现高亮接口的两个方法
 	virtual void HighlightActor_Implementation() override;
 	virtual void UnHighlightActor_Implementation() override;
+	virtual void SetMoveToLocation_Implementation(FVector& OutDestination) override;
 	//
 
 	//继承实现战斗接口
@@ -53,6 +54,8 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
 
+	void SetLevel(int32 InLevel) { Level = InLevel; };
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void InitAbilityActorInfo() override;
@@ -70,6 +73,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AAuraAIController> AuraAIController;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnLoot();
 
 private:
 };

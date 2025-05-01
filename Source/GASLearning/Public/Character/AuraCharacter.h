@@ -43,7 +43,13 @@ public:
 
 	//战斗接口的是实现
 	virtual int32 GetPlayerLevel_Implementation() override;
+	virtual void Die(const FVector& DeathImpulse) override;
 	//
+
+	UPROPERTY(EditDefaultsOnly)
+	float DeathTime = 5.f;
+
+	FTimerHandle DeathTimer;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;

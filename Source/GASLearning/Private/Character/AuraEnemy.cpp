@@ -33,6 +33,11 @@ AAuraEnemy::AAuraEnemy()
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
 
+	GetMesh()->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	GetMesh()->MarkRenderStateDirty();
+	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
+	Weapon->MarkRenderStateDirty();
+
 	BaseWalkSpeed = 250.f;
 }
 
@@ -52,13 +57,17 @@ void AAuraEnemy::HighlightActor_Implementation()
 {
 	GetMesh()->SetRenderCustomDepth(true);
 	Weapon->SetRenderCustomDepth(true);
-	Weapon->SetCustomDepthStencilValue(CUSTOM_DEPTH_RED);
 }
 
 void AAuraEnemy::UnHighlightActor_Implementation()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 	Weapon->SetRenderCustomDepth(false);
+}
+
+void AAuraEnemy::SetMoveToLocation_Implementation(FVector& OutDestination)
+{
+	//什么也不需要改变。
 }
 
 int32 AAuraEnemy::GetPlayerLevel_Implementation()
@@ -73,6 +82,7 @@ void AAuraEnemy::Die(const FVector& DeathImpulse)
 	{
 		AuraAIController->GetBlackboardComponent()->SetValueAsBool(FName("Dead"), true);
 	}
+	SpawnLoot();
 	Super::Die(DeathImpulse);
 }
 

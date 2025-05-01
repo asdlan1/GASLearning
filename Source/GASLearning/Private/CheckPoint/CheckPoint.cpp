@@ -17,12 +17,18 @@ ACheckPoint::ACheckPoint(const FObjectInitializer& ObjectInitializer)
 	CheckPointMesh->SetupAttachment(GetRootComponent());
 	CheckPointMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	CheckPointMesh->SetCollisionResponseToAllChannels(ECR_Block);
+
+	CheckPointMesh->SetCustomDepthStencilValue(CustomDepthStencilOverride);
+	CheckPointMesh->MarkRenderStateDirty();
 	
 	Sphere = CreateDefaultSubobject<USphereComponent>("Sphere");
 	Sphere->SetupAttachment(CheckPointMesh);
 	Sphere->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	Sphere->SetCollisionResponseToAllChannels(ECR_Ignore);
 	Sphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+
+	MoveToComponent = CreateDefaultSubobject<USceneComponent>("MoveToComponent");
+	MoveToComponent->SetupAttachment(GetRootComponent());
 }
 
 void ACheckPoint::LoadActor_Implementation()
@@ -42,7 +48,11 @@ void ACheckPoint::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AAct
 
 		if (AAuraGameModeBase* AuraGM = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
 		{
-			AuraGM->SaveWorldState(GetWorld());
+			const UWorld* World = GetWorld();
+			FString MapName = World->GetMapName();
+			MapName.RemoveFromStart(World->StreamingLevelsPrefix);
+			
+			AuraGM->SaveWorldState(GetWorld(), MapName);
 		}
 		
 		IPlayerInterface::Execute_SaveProgress(OtherActor, PlayerStartTag);
@@ -54,7 +64,28 @@ void ACheckPoint::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckPoint::OnSphereOverlap);
+	if (bBindOverlapCallback)
+	{
+		Sphere->OnComponentBeginOverlap.AddDynamic(this, &ACheckPoint::OnSphereOverlap);
+	}
+}
+
+void ACheckPoint::SetMoveToLocation_Implementation(FVector& OutDestination)
+{
+	OutDestination = MoveToComponent->GetComponentLocation();
+}
+
+void ACheckPoint::HighlightActor_Implementation()
+{
+	if (!bReached)
+	{
+		CheckPointMesh->SetRenderCustomDepth(true);
+	}
+}
+
+void ACheckPoint::UnHighlightActor_Implementation()
+{
+	CheckPointMesh->SetRenderCustomDepth(false);
 }
 
 void ACheckPoint::HandleGlowEffects()

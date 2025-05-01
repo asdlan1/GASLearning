@@ -34,12 +34,18 @@ UMVVM_LoadSlot* UMVVM_LoadScreen::GetLoadSlotViewModelByIndex(int32 Index) const
 void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString& EnterName)
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (!IsValid(AuraGameMode))
+	{
+		GEngine->AddOnScreenDebugMessage(1, 15.f, FColor::Magenta, FString("Player siwtch to Single Player"));
+		return;
+	}
 
 	LoadSlots[Slot]->SetMapName(AuraGameMode->DefaultMapName);
 	LoadSlots[Slot]->SetPlayerName(EnterName);
 	LoadSlots[Slot]->SetPlayerLevel(1);
 	LoadSlots[Slot]->SlotStatus = Taken;
 	LoadSlots[Slot]->PlayerStartTag = AuraGameMode->DefaultPlayerStartTag;
+	LoadSlots[Slot]->MapAssetName = AuraGameMode->DefaultMap.ToSoftObjectPath().GetAssetName();
 
 	AuraGameMode->SaveSlotData(LoadSlots[Slot], Slot);
 	LoadSlots[Slot]->InitializeSlot();
@@ -100,6 +106,7 @@ void UMVVM_LoadScreen::PlayButtonPressed()
 void UMVVM_LoadScreen::LoadData()
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (!IsValid(AuraGameMode)) return;
 	for (const TTuple<int32, UMVVM_LoadSlot*>& LoadSlot : LoadSlots)
 	{
 		ULoadScreenSaveGame* SaveObject = AuraGameMode->GetSaveSlotData(LoadSlot.Value->GetLoadSlotName(), LoadSlot.Key);
