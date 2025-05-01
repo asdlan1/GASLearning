@@ -26,20 +26,15 @@ void UAuraAbilitySystemComponent::AddCharacterAbilitiesFromSaveData(ULoadScreenS
 
 		LoadedAbilitySpec.DynamicAbilityTags.AddTag(Data.AbilitySlot);
 		LoadedAbilitySpec.DynamicAbilityTags.AddTag(Data.AbilityStatus);
-		if (Data.AbilityType == FAuraGameplayTags::Get().Abilities_Type_Offensive)
+		const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+		GiveAbility(LoadedAbilitySpec);
+		
+		if (Data.AbilityType == FAuraGameplayTags::Get().Abilities_Type_Passive && Data.AbilityStatus.MatchesTagExact(GameplayTags.Abilities_Status_Equipped))
 		{
-			GiveAbility(LoadedAbilitySpec);
-		}
-		else if (Data.AbilityType == FAuraGameplayTags::Get().Abilities_Type_Passive)
-		{
-			if (Data.AbilityStatus.MatchesTagExact(FAuraGameplayTags::Get().Abilities_Status_Equipped))
-			{
-				GiveAbilityAndActivateOnce(LoadedAbilitySpec);
-			}
-			else
-			{
-				GiveAbility(LoadedAbilitySpec);
-			}
+			TryActivateAbility(LoadedAbilitySpec.Handle);
+			MulticastActivatePassiveEffect(Data.AbilityTag, true); //激活被动技能
+			MarkAbilitySpecDirty(LoadedAbilitySpec);
+			ClientEquipAbility(Data.AbilityTag, GameplayTags.Abilities_Status_Equipped, Data.AbilitySlot, Data.AbilitySlot);
 		}
 	}
 	bStartupAbilitiesGiven = true;
@@ -350,6 +345,8 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 					{
 						MulticastActivatePassiveEffect(GetAbilityTagFromSpec(*SpecWithSlot), false);
 						DeactivatePassiveAbility.Broadcast(GetAbilityTagFromSpec(*SpecWithSlot));
+						SpecWithSlot->DynamicAbilityTags.RemoveTag(GetStatusTagFromSpec(*SpecWithSlot));
+						SpecWithSlot->DynamicAbilityTags.AddTag(GameplayTags.Abilities_Status_Unlocked);
 					}
 
 					ClearSlot(SpecWithSlot);
